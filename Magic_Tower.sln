@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magic_Tower", "Magic_Tower.csproj", "{CEE6A252-11A2-A4B7-87FC-41C8C31FBA45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magic_Tower.Editor", "Magic_Tower.Editor.csproj", "{FB044E64-2127-7E49-F4D1-0A6A322AE21E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEE6A252-11A2-A4B7-87FC-41C8C31FBA45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEE6A252-11A2-A4B7-87FC-41C8C31FBA45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEE6A252-11A2-A4B7-87FC-41C8C31FBA45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEE6A252-11A2-A4B7-87FC-41C8C31FBA45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB044E64-2127-7E49-F4D1-0A6A322AE21E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB044E64-2127-7E49-F4D1-0A6A322AE21E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB044E64-2127-7E49-F4D1-0A6A322AE21E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB044E64-2127-7E49-F4D1-0A6A322AE21E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

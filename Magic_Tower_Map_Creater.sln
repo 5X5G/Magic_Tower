@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magic_Tower_Map_Creater", "Magic_Tower_Map_Creater.csproj", "{4D25D781-C094-5C42-6E32-6BCDFF9378DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magic_Tower_Map_Creater.Editor", "Magic_Tower_Map_Creater.Editor.csproj", "{762A5BB2-9F4C-A2BF-6572-EE10A2223BCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D25D781-C094-5C42-6E32-6BCDFF9378DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D25D781-C094-5C42-6E32-6BCDFF9378DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D25D781-C094-5C42-6E32-6BCDFF9378DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D25D781-C094-5C42-6E32-6BCDFF9378DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{762A5BB2-9F4C-A2BF-6572-EE10A2223BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{762A5BB2-9F4C-A2BF-6572-EE10A2223BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{762A5BB2-9F4C-A2BF-6572-EE10A2223BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{762A5BB2-9F4C-A2BF-6572-EE10A2223BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
