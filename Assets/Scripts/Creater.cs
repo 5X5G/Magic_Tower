@@ -19,7 +19,6 @@ public class Creater : MonoBehaviour
 
     private void Awake()
     {
-        Nglobal.creater = this;
     }
 
     private void Start()
@@ -29,10 +28,6 @@ public class Creater : MonoBehaviour
         floorList = new List<CellData[,]>();
         floor = 1;
         ShowFloor();
-        Debug.Log(Application.dataPath);
-        Debug.Log(Application.streamingAssetsPath);
-        Debug.Log(Application.persistentDataPath); 
-        Debug.Log(Application.temporaryCachePath);
     }
 
     public void Save()

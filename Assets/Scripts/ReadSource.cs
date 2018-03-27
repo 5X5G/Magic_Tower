@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class ReadSource:Singleton<ReadSource>
 {
-    private string UIpath = "Assets/Resources/Art/Icon/";
-    private Vector2 vec = new Vector2(0, 0);
-    private string previewName = "gray";
+    private string UIpath = "Assets/Resources/Art/Icon/";        
     private int length = 11;
+
+    private void Awake()
+    {
+        Nglobal.readSource = this;
+    }
 
     public List<SpriteInfo> LoadSpiteName(string dictionary)
     {
@@ -140,7 +143,7 @@ public class ReadSource:Singleton<ReadSource>
             objstate.CellInfo = null;
             UISprite mUISprite = cells[i].GetComponent<UISprite>();
             mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
-            mUISprite.GetComponent<UIButton>().normalSprite = previewName;
+            mUISprite.GetComponent<UIButton>().normalSprite = Nglobal.constantWall;
             cells[i].name = "cell";
         }        
     }

@@ -13,23 +13,31 @@ public class Nglobal : Singleton<Nglobal> {
         Monster,
         Wall,
     }
+    public static string playerCharactername = "Actor01-Braver01_1_1";
+    public static string constantWall = "gray";
 
-    public static Nglobal nglobal;
+    public static Nglobal nglobal;    
+    public static Map map;
+    public static Menu menu;    
+
     public static ReadSource readSource;
-    public static PoolManager poolManager;    
-    public static Creater creater;    
+    public static PoolManager poolManager;
+    public static RefreshManger refreshManger;
+    public static PlayerManger playerManager;
+  
+
+    public static Dictionary<string, List<SpriteInfo>> spriteInfos = new Dictionary<string, List<SpriteInfo>>();
 
     private void Start()
     {
         Init();
-        SceneManager.LoadScene("Create");
+        SceneManager.LoadScene("Game");
     }
     private void Init()
     {
         nglobal = Instance;
-        DontDestroyOnLoad(this.gameObject);
-        readSource = ReadSource.Instance;
-        poolManager = PoolManager.Instance;
+        DontDestroyOnLoad(this.gameObject);        
+        spriteInfos = InitSpriteList();
     }
 
     public static Dictionary<string, List<SpriteInfo>> InitSpriteList()
@@ -51,5 +59,6 @@ public class Nglobal : Singleton<Nglobal> {
     public static string saveSuccess = "保存bytes成功";
     public static string loadSuccess = "读取bytes成功";
     public static string initSuccess = "Init地图成功";
+    public static string OutOfBorder = "超出边界";
     #endregion
 }

@@ -15,6 +15,7 @@ public class PoolManager :Singleton<PoolManager>{
 
     private void Awake()
     {
+        Nglobal.poolManager = this;
         prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
     }
