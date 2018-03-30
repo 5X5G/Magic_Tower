@@ -40,6 +40,54 @@ public class ReadSource:Singleton<ReadSource>
         return spriteInfoList;
     }
 
+    public Dictionary<string, Property> LoadPropertyBytes(string path1,string path2)
+    {
+        Dictionary<string, Property> tempProperty = new Dictionary<string, Property>();
+        StreamReader sReader = new StreamReader(path1 + path2, System.Text.Encoding.UTF8);
+        string s = sReader.ReadToEnd();
+        string[] lines = s.Split('\n');
+        //第一行是注释
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] line = lines[i].Split('@');
+            //第一个为字典的key
+            Property property = new Property();
+            StandardProperty sProperty = new StandardProperty();
+
+            if (line[1] != "")
+            {
+                property.type = int.Parse(line[1]);
+            }
+            if (line[2] != "")
+            {
+                property.sType = int.Parse(line[2]);                
+            }
+            if (line[3] != "")
+            {
+                string[] stand = line[3].Split(',');
+                sProperty.Hp = int.Parse(stand[0]);
+                sProperty.ATK = int.Parse(stand[1]);
+                sProperty.DEF = int.Parse(stand[2]);
+                property.standardPro = sProperty;
+            }
+            if (line[4] != "")
+            {
+                property.describe = line[4];
+            }
+
+            if (line[5] != "")
+            {
+                property.power = line[5];
+            }
+            if (line[6] != "")
+            {
+                property.count = int.Parse(line[6]);
+            }
+            tempProperty.Add(line[0], property);
+        }
+        return tempProperty;
+    }
+
     public void CreateMapBytes(string path1, string path2, List<CellData[,]> floorList)
     {
         StreamWriter sw;
@@ -92,7 +140,17 @@ public class ReadSource:Singleton<ReadSource>
         int floor = 0;
         int line = 0;
         CellData[,] cellInfos = new CellData[11, 11];
-        for (int i = 0; i < mapLines.Length; i++)
+
+        //读取保存文件中的玩家信息
+        StandardProperty sProperty = new StandardProperty();
+        string[] sPropertyLine = mapLines[0].Split('@');
+        string[] sPropertyList = sPropertyLine[1].Split(',');
+        sProperty.Hp = int.Parse(sPropertyList[0]);
+        sProperty.ATK = int.Parse(sPropertyList[1]);
+        sProperty.DEF = int.Parse(sPropertyList[2]);
+        Nglobal.PlayerInitStandProperty = sProperty;
+
+        for (int i = 1; i < mapLines.Length; i++)
         {            
             if (mapLines[i].Contains("#"))
             {                
@@ -103,7 +161,7 @@ public class ReadSource:Singleton<ReadSource>
                 continue;
             }
 
-            int realLine = floor * (length + 1) + line + 1;
+            int realLine = floor * (length + 1) + line + 2;
             string[] mapLineInfo = mapLines[realLine].Split('@');
             for (int j = 0; j < mapLineInfo.Length; j++)
             {
@@ -113,6 +171,8 @@ public class ReadSource:Singleton<ReadSource>
                 string[] names = mapLineInfo[j].Split(',');
                 tempData.altas = names[0];
                 tempData.sName = names[1];
+                if (Nglobal.propertys.ContainsKey(tempData.sName))
+                    tempData.property = Nglobal.propertys[tempData.sName];               
                 cellInfos[line, j] = tempData;
             }
             line++;

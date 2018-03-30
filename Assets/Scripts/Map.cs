@@ -16,6 +16,7 @@ public class Map : MonoBehaviour
     private int playerVecRef2;
     private int border;
     private int floor;
+    private bool canMove { set; get; }
 
     private void Awake()
     {
@@ -26,10 +27,10 @@ public class Map : MonoBehaviour
         Init();
         Load();
 
-        showFloor.text = Application.persistentDataPath;
-        showFloor.text += "\n" + Application.dataPath;
-        showFloor.text += "\n" + Application.streamingAssetsPath;
-        showFloor.text += "\n" + Application.temporaryCachePath;
+        //showFloor.text = Application.persistentDataPath;
+        //showFloor.text += "\n" + Application.dataPath;
+        //showFloor.text += "\n" + Application.streamingAssetsPath;
+        //showFloor.text += "\n" + Application.temporaryCachePath;
     }
 
     private void Init()
@@ -38,6 +39,7 @@ public class Map : MonoBehaviour
         border = cellInfos.GetLength(0);
         floorList = new List<CellData[,]>();
         floor = 1;
+        canMove = true;
     }
 
     private void Load()
@@ -47,8 +49,10 @@ public class Map : MonoBehaviour
         LoadFloorList(floorList[floor - 1]);
         cellInfos = floorList[floor - 1];
         GetPlayerVec(cellInfos);
+        Nglobal.playerManager.Init();
     }
 
+    //初始化map显示，图集置空
     private void InitializeCell(CellData[,] cellInfos)
     {
         for (int i = 0; i < cellInfos.GetLength(0); i++)
@@ -81,6 +85,7 @@ public class Map : MonoBehaviour
                 UISprite mUISprite = tempTrans.GetComponent<UISprite>();
                 mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
                 mUISprite.GetComponent<UIButton>().normalSprite = tempData.sName;
+
             }
         }
     }
@@ -120,10 +125,10 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef1 + 1 < border)
                 {
-                    ChangeCellData(playerVecRef1 + 1, playerVecRef2, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
-                    ChangeCellView(playerVecRef1 + 1, playerVecRef2);
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
+                    ChangeCellData(playerVecRef1 + 1, playerVecRef2, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
+                    ChangeCellView(playerVecRef1 + 1, playerVecRef2);
                     playerVecRef1++;
                 }
                 else
@@ -133,13 +138,20 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef1 - 1 >= 0)
                 {
-                    ChangeCellData(playerVecRef1 - 1, playerVecRef2, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
-                    ChangeCellView(playerVecRef1 - 1, playerVecRef2);
+                    DetermineCellType(playerVecRef1 - 1, playerVecRef2);
+                    if (!canMove)
+                    {
+                        canMove =true;
+                        return;
+                    }
+                        
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
+                    ChangeCellData(playerVecRef1 - 1, playerVecRef2, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
+                    ChangeCellView(playerVecRef1 - 1, playerVecRef2);
                     playerVecRef1--;
                 }
-                    
+
                 else
                     Debug.Log("Move Character up" + Nglobal.OutOfBorder);
             }
@@ -151,27 +163,27 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef2 + 1 < border)
                 {
-                    ChangeCellData(playerVecRef1, playerVecRef2 + 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
-                    ChangeCellView(playerVecRef1, playerVecRef2 + 1);
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
+                    ChangeCellData(playerVecRef1, playerVecRef2 + 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
+                    ChangeCellView(playerVecRef1, playerVecRef2 + 1);
                     playerVecRef2++;
                 }
                 else
                     Debug.Log("Move Character right" + Nglobal.OutOfBorder);
-            }   
+            }
             else
             {
                 if (playerVecRef2 - 1 >= 0)
                 {
-                    ChangeCellData(playerVecRef1, playerVecRef2 - 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
-                    ChangeCellView(playerVecRef1, playerVecRef2 - 1);
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
+                    ChangeCellData(playerVecRef1, playerVecRef2 - 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
+                    ChangeCellView(playerVecRef1, playerVecRef2 - 1);
                     playerVecRef2--;
                 }
                 else
-                    Debug.Log("Move Character left" + Nglobal.OutOfBorder);                
+                    Debug.Log("Move Character left" + Nglobal.OutOfBorder);
             }
         }
     }
@@ -227,6 +239,107 @@ public class Map : MonoBehaviour
             cellInfos[x, y] = tempData;
         }
         else
-            cellInfos[x,y] = null;        
+            cellInfos[x, y] = null;
+    }
+
+    private void DetermineCellType(int x, int y)
+    {
+        if (cellInfos[x, y] == null)
+            return;
+        if (cellInfos[x, y].altas == Nglobal.DictionaryName.Monster.ToString())
+        {
+            OperateMonster(cellInfos[x, y]);
+            Nglobal.playerManager.RenewProperty();
+        }
+        else if (cellInfos[x, y].altas == Nglobal.DictionaryName.Item.ToString())
+        {
+            OperateItem(cellInfos[x, y]);
+            Nglobal.playerManager.RenewProperty();
+            Debug.Log("sName：" + cellInfos[x, y].sName);
+            Debug.Log("sType：" + cellInfos[x, y].property.sType);
+            Debug.Log("count：" + cellInfos[x, y].property.count);
+        }
+        else if (cellInfos[x, y].altas == Nglobal.DictionaryName.Character.ToString())
+        {
+
+        }
+        else if (cellInfos[x, y].altas == Nglobal.DictionaryName.Wall.ToString())
+        {
+
+        }
+    }
+
+    private void OperateItem(CellData data)
+    {
+        if (data.property.type == 1)
+        {
+            StandardProperty sProperty = Nglobal.playerManager.PlayerInfomation.standardPro;
+            if (data.property.sType == 1)
+                sProperty.Hp += data.property.count;
+            else if (data.property.sType == 2)
+                sProperty.ATK += data.property.count;
+            else
+                sProperty.DEF += data.property.count;
+
+            Nglobal.playerManager.PlayerInfomation.standardPro = sProperty;
+        }
+        else
+        {
+            foreach (CellData tempData in Nglobal.playerManager.PlayerInfomation.items)
+            {
+                if (tempData.sName == data.sName)
+                    tempData.property.count++;
+            }
+        }
+    }
+
+    private void OperateMonster(CellData data)
+    {
+        StandardProperty monsterProperty = new StandardProperty();
+        monsterProperty.Hp = data.property.standardPro.Hp;
+        monsterProperty.ATK = data.property.standardPro.ATK;
+        monsterProperty.DEF = data.property.standardPro.DEF;
+        StandardProperty playerProperty = new StandardProperty();
+        playerProperty.Hp = Nglobal.playerManager.PlayerInfomation.standardPro.Hp;
+        playerProperty.ATK = Nglobal.playerManager.PlayerInfomation.standardPro.ATK;
+        playerProperty.DEF = Nglobal.playerManager.PlayerInfomation.standardPro.DEF;
+        if (playerProperty.ATK - monsterProperty.DEF <= 0)
+        {
+            canMove = false;
+            Debug.Log(Nglobal.StrongerMonser);
+            return;
+        }
+
+        while (playerProperty.Hp > 0)
+        {
+            monsterProperty.Hp -= playerProperty.ATK - monsterProperty.DEF;
+            if (monsterProperty.Hp <= 0)
+                break;
+            playerProperty.Hp -= monsterProperty.ATK - playerProperty.DEF;
+            if (playerProperty.Hp <= 0)
+            {
+                canMove = false;
+                Debug.Log(Nglobal.StrongerMonser);
+                return;
+            }
+        }
+
+        Nglobal.playerManager.PlayerInfomation.standardPro = playerProperty;
+        Nglobal.playerManager.PlayerInfomation.gold += data.property.count;
+    }
+
+    private void OperateWall(CellData data)
+    {
+        if (data.sName != Nglobal.constantWall)
+        {
+            if (data.sName != Nglobal.constantwall2)
+                canMove = false;
+            else
+            {
+                string names = data.sName.Split("door");
+            }
+        }
+        else
+            canMove = true;
     }
 }

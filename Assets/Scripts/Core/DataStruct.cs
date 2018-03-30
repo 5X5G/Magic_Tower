@@ -28,9 +28,11 @@ public class Property
     public string power;
     public StandardProperty standardPro;
     //区分道具等级（包括钥匙），同时也区别一次性宝物
+    //消耗道具1，钥匙2，怪物3,墙壁4,宝物5，一次性宝物6
     public int type;
-    public bool add;
-    public int Count;
+    //基础属性type
+    public int sType;
+    public int count;
 }
 
 
@@ -39,6 +41,7 @@ public class PlayerInfo
     public StandardProperty standardPro;
     public List<CellData> items;
     public List<CellData> treasures;
+    public int gold;
 }
 
 public class StandardProperty
