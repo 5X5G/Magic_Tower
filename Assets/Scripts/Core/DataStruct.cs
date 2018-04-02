@@ -28,7 +28,7 @@ public class Property
     public string power;
     public StandardProperty standardPro;
     //区分道具等级（包括钥匙），同时也区别一次性宝物
-    //消耗道具1，钥匙2，怪物3,墙壁4,宝物5，一次性宝物6
+    //消耗道具1，钥匙2，怪物3,墙壁4,楼梯5，宝物6，一次性宝物7
     public int type;
     //基础属性type
     public int sType;

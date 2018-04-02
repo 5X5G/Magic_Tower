@@ -79,7 +79,7 @@ public class ReadSource:Singleton<ReadSource>
             {
                 property.power = line[5];
             }
-            if (line[6] != "")
+            if (line[6] != "" && line[6] !="\r")
             {
                 property.count = int.Parse(line[6]);
             }
@@ -143,12 +143,16 @@ public class ReadSource:Singleton<ReadSource>
 
         //读取保存文件中的玩家信息
         StandardProperty sProperty = new StandardProperty();
-        string[] sPropertyLine = mapLines[0].Split('@');
+        string[] sPropertyLine = mapLines[1].Split('@');
         string[] sPropertyList = sPropertyLine[1].Split(',');
         sProperty.Hp = int.Parse(sPropertyList[0]);
         sProperty.ATK = int.Parse(sPropertyList[1]);
         sProperty.DEF = int.Parse(sPropertyList[2]);
-        Nglobal.PlayerInitStandProperty = sProperty;
+        Nglobal.map.playerInitStandProperty = sProperty;
+        Nglobal.map.keyCounts.Add(int.Parse(sPropertyLine[2]));
+        Nglobal.map.keyCounts.Add(int.Parse(sPropertyLine[3]));
+        Nglobal.map.keyCounts.Add(int.Parse(sPropertyLine[4]));
+        Nglobal.map.initFloor = int.Parse(sPropertyLine[5]);
 
         for (int i = 1; i < mapLines.Length; i++)
         {            
@@ -161,7 +165,7 @@ public class ReadSource:Singleton<ReadSource>
                 continue;
             }
 
-            int realLine = floor * (length + 1) + line + 2;
+            int realLine = floor * (length + 1) + line + 3;
             string[] mapLineInfo = mapLines[realLine].Split('@');
             for (int j = 0; j < mapLineInfo.Length; j++)
             {

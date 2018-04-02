@@ -81,7 +81,7 @@ MonoBehaviour:
     paddingBottom: 0
   - name: door02
     x: 0
-    y: 63
+    y: 30
     width: 32
     height: 32
     borderLeft: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
     paddingBottom: 0
   - name: door03
     x: 33
-    y: 63
+    y: 30
     width: 32
     height: 32
     borderLeft: 0
@@ -106,6 +106,19 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: door04
+    x: 33
+    y: 63
+    width: 32
+    height: 32
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: downFloor
     x: 66
     y: 96
     width: 32
@@ -120,7 +133,20 @@ MonoBehaviour:
     paddingBottom: 0
   - name: gray
     x: 0
-    y: 30
+    y: 63
+    width: 32
+    height: 32
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: upFloor
+    x: 66
+    y: 63
     width: 32
     height: 32
     borderLeft: 0

@@ -204,10 +204,10 @@ public class PlayerManger : MonoBehaviour {
             CellData tempData = new CellData();
             tempData.sName = Nglobal.itemName[i];
             tempData.property = new Property();
-            tempData.property.count = 0;
+            tempData.property.count = Nglobal.map.keyCounts[i];
             PlayerInfomation.items.Add(tempData);
         }
         PlayerInfomation.gold = 0;
-        PlayerInfomation.standardPro = Nglobal.PlayerInitStandProperty;
+        PlayerInfomation.standardPro = Nglobal.map.playerInitStandProperty;        
     }
 }

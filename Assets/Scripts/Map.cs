@@ -16,7 +16,12 @@ public class Map : MonoBehaviour
     private int playerVecRef2;
     private int border;
     private int floor;
+    private bool up;
     private bool canMove { set; get; }
+
+    public  StandardProperty playerInitStandProperty = new StandardProperty();
+    public  List<int> keyCounts = new List<int>();
+    public  int initFloor;
 
     private void Awake()
     {
@@ -27,28 +32,29 @@ public class Map : MonoBehaviour
         Init();
         Load();
 
-        //showFloor.text = Application.persistentDataPath;
-        //showFloor.text += "\n" + Application.dataPath;
-        //showFloor.text += "\n" + Application.streamingAssetsPath;
-        //showFloor.text += "\n" + Application.temporaryCachePath;
+        showFloor.text = Application.persistentDataPath;
+        showFloor.text += "\n" + Application.dataPath;
+        showFloor.text += "\n" + Application.streamingAssetsPath;
+        showFloor.text += "\n" + Application.temporaryCachePath;
     }
 
     private void Init()
     {
         cellInfos = new CellData[11, 11];
         border = cellInfos.GetLength(0);
-        floorList = new List<CellData[,]>();
-        floor = 1;
+        floorList = new List<CellData[,]>();        
         canMove = true;
+        up = true;
     }
 
     private void Load()
     {
         Nglobal.readSource.LoadMapBytes(mapInfo, ref floorList, Application.persistentDataPath);
+        floor = initFloor;
         InitializeCell(cellInfos);
         LoadFloorList(floorList[floor - 1]);
         cellInfos = floorList[floor - 1];
-        GetPlayerVec(cellInfos);
+        InitPlayerVec(cellInfos);
         Nglobal.playerManager.Init();
     }
 
@@ -59,9 +65,14 @@ public class Map : MonoBehaviour
         {
             for (int j = 0; j < cellInfos.GetLength(1); j++)
             {
+                if (cellInfos[i, j] != null)
+                {
+                    cellInfos[i, j] = null;
+                }
+
                 Transform tempTrans = cells[i * cellInfos.GetLength(0) + j];
                 UISprite mUISprite = tempTrans.GetComponent<UISprite>();
-                mUISprite.atlas = null;
+                mUISprite.atlas = null;                
             }
         }
     }
@@ -125,6 +136,13 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef1 + 1 < border)
                 {
+                    DetermineCellType(playerVecRef1 + 1, playerVecRef2);
+                    if (!canMove)
+                    {
+                        canMove = true;
+                        return;
+                    }
+
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
                     ChangeCellData(playerVecRef1 + 1, playerVecRef2, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
@@ -163,6 +181,13 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef2 + 1 < border)
                 {
+                    DetermineCellType(playerVecRef1, playerVecRef2 + 1);
+                    if (!canMove)
+                    {
+                        canMove = true;
+                        return;
+                    }
+
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
                     ChangeCellData(playerVecRef1, playerVecRef2 + 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
@@ -176,6 +201,13 @@ public class Map : MonoBehaviour
             {
                 if (playerVecRef2 - 1 >= 0)
                 {
+                    DetermineCellType(playerVecRef1, playerVecRef2 - 1);
+                    if (!canMove)
+                    {
+                        canMove = true;
+                        return;
+                    }
+
                     ChangeCellData(playerVecRef1, playerVecRef2, null, null);
                     ChangeCellView(playerVecRef1, playerVecRef2);
                     ChangeCellData(playerVecRef1, playerVecRef2 - 1, Nglobal.DictionaryName.Character.ToString(), Nglobal.playerCharactername);
@@ -188,7 +220,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    private void GetPlayerVec(CellData[,] cellInfos)
+    private void InitPlayerVec(CellData[,] cellInfos)
     {
         for (int i = 0; i < cellInfos.GetLength(0); i++)
         {
@@ -207,6 +239,87 @@ public class Map : MonoBehaviour
         }
     }
 
+    private void ConfigPlayerVec(CellData[,] cellInfo)
+    {
+        if (up)
+        {
+            int ref1 = 0;
+            int ref2 = 0;
+            for (int i = 0; i < cellInfo.GetLength(0); i++)
+            {
+                for (int j = 0; j < cellInfo.GetLength(1); j++)
+                {
+                    if (cellInfo[i, j].sName == "upFloor")
+                    {
+                        ref1 = i;
+                        ref2 = j;
+                        break;
+                    }
+                }
+            }
+
+            if (ref1 + 1 < 11)
+            {
+                if (cellInfo[ref1 + 1, ref2] == null)
+                {
+                    Transform tempTrans = cells[(ref1 + 1) * cellInfos.GetLength(0) + ref2];
+                    CellData tempData = new CellData();
+                    tempData.altas = Nglobal.DictionaryName.Character.ToString();
+                    tempData.sName = Nglobal.playerCharactername;
+                    tempTrans.name = tempData.sName;
+                    var atlas_go = Resources.Load<GameObject>("Art/UI/" + tempData.altas);
+                    UISprite mUISprite = tempTrans.GetComponent<UISprite>();
+                    mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
+                    mUISprite.GetComponent<UIButton>().normalSprite = tempData.sName;
+                    cellInfo[ref1 + 1, ref2] = tempData;
+                }
+
+                if (cellInfo[ref1 - 1, ref2] == null)
+                {
+                    Transform tempTrans = cells[(ref1 - 1) * cellInfos.GetLength(0) + ref2];
+                    CellData tempData = new CellData();
+                    tempData.altas = Nglobal.DictionaryName.Character.ToString();
+                    tempData.sName = Nglobal.playerCharactername;
+                    tempTrans.name = tempData.sName;
+                    var atlas_go = Resources.Load<GameObject>("Art/UI/" + tempData.altas);
+                    UISprite mUISprite = tempTrans.GetComponent<UISprite>();
+                    mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
+                    mUISprite.GetComponent<UIButton>().normalSprite = tempData.sName;
+                    cellInfo[ref1 - 1, ref2] = tempData;
+                }
+
+                if (cellInfo[ref1, ref2 + 1] == null)
+                {
+                    Transform tempTrans = cells[ref1 * cellInfos.GetLength(0) + ref2 + 1];
+                    CellData tempData = new CellData();
+                    tempData.altas = Nglobal.DictionaryName.Character.ToString();
+                    tempData.sName = Nglobal.playerCharactername;
+                    tempTrans.name = tempData.sName;
+                    var atlas_go = Resources.Load<GameObject>("Art/UI/" + tempData.altas);
+                    UISprite mUISprite = tempTrans.GetComponent<UISprite>();
+                    mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
+                    mUISprite.GetComponent<UIButton>().normalSprite = tempData.sName;
+                    cellInfo[ref1, ref2 + 1] = tempData;
+                }
+
+                if (cellInfo[ref1, ref2-1] == null)
+                {
+                    Transform tempTrans = cells[ref1 * cellInfos.GetLength(0) + ref2 - 1];
+                    CellData tempData = new CellData();
+                    tempData.altas = Nglobal.DictionaryName.Character.ToString();
+                    tempData.sName = Nglobal.playerCharactername;
+                    tempTrans.name = tempData.sName;
+                    var atlas_go = Resources.Load<GameObject>("Art/UI/" + tempData.altas);
+                    UISprite mUISprite = tempTrans.GetComponent<UISprite>();
+                    mUISprite.atlas = atlas_go.GetComponent<UIAtlas>();
+                    mUISprite.GetComponent<UIButton>().normalSprite = tempData.sName;
+                    cellInfo[ref1, ref2 - 1] = tempData;
+                }
+            }
+        }
+    }
+
+
     private void ChangeCellView(int x, int y)
     {
         Transform tempTrans = cells[x * cellInfos.GetLength(0) + y];
@@ -215,6 +328,7 @@ public class Map : MonoBehaviour
 
         if (tempData == null)
         {
+            tempTrans.name = "cell";
             UISprite nUISprite = tempTrans.GetComponent<UISprite>();
             nUISprite.atlas = null;
             return;
@@ -265,7 +379,8 @@ public class Map : MonoBehaviour
         }
         else if (cellInfos[x, y].altas == Nglobal.DictionaryName.Wall.ToString())
         {
-
+            OperateWall(cellInfos[x, y]);
+            Nglobal.playerManager.RenewProperty();
         }
     }
 
@@ -330,16 +445,71 @@ public class Map : MonoBehaviour
 
     private void OperateWall(CellData data)
     {
-        if (data.sName != Nglobal.constantWall)
+        if (data.sName == Nglobal.upFloor)
         {
-            if (data.sName != Nglobal.constantwall2)
-                canMove = false;
-            else
+            SaveCellState();
+            CellData[,] tempDatas= ConfigData(cellInfos);
+            floorList[floor - 1] = tempDatas;
+            InitializeCell(cellInfos);
+            floor++;
+            LoadFloorList(floorList[floor - 1]);
+            cellInfos = floorList[floor - 1];
+            canMove = false;
+            return;
+        }
+        else if (data.sName == Nglobal.downFloor)
+        {
+            SaveCellState();
+            CellData[,] tempDatas = ConfigData(cellInfos);
+            floorList[floor - 1] = tempDatas;
+            InitializeCell(cellInfos);
+            floor--;
+            LoadFloorList(floorList[floor - 1]);
+            cellInfos = floorList[floor - 1];
+            canMove = false;
+            return;
+        }
+
+
+            if (data.sName != Nglobal.constantWall)
             {
-                string names = data.sName.Split("door");
+                if (data.sName == Nglobal.constantwall2)
+                    canMove = false;
+                else
+                {
+                    int door = int.Parse(data.sName[4].ToString());
+                    int keyCount = Nglobal.playerManager.PlayerInfomation.items[door].property.count;
+                    if (keyCount > 0)
+                    {
+                        canMove = true;
+                        Nglobal.playerManager.PlayerInfomation.items[door].property.count--;
+                    }
+                    else
+                    {
+                        canMove = false;
+                        Debug.Log(Nglobal.itemKey[door] + Nglobal.NeedKey);
+                    }
+
+                }
+            }
+            else
+                canMove = true;
+    }
+
+    private CellData[,] ConfigData(CellData[,] cellInfo)
+    {
+        CellData[,] tempData = new CellData[11, 11];
+        for (int i = 0; i < cellInfo.GetLength(0); i++)
+        {
+            for (int j = 0; j < cellInfo.GetLength(1); j++)
+            {
+                if (cellInfo[i, j] == null)
+                    continue;
+                tempData[i, j] = new CellData();
+                tempData[i, j].altas = cellInfo[i, j].altas;
+                tempData[i, j].sName = cellInfo[i, j].sName;
             }
         }
-        else
-            canMove = true;
+        return tempData;
     }
 }
